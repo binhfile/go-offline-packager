@@ -33,10 +33,11 @@ func (p *PackCmd) Execute(args []string) error {
 
 	workDir, cleanFn := createTempWorkDir()
 	defer cleanFn()
+	log.Printf("workDir=%v", workDir)
 
 	modCache := filepath.Join(workDir, "modcache")
 	if err := os.Mkdir(modCache, 0774); err != nil {
-		log.Fatalf("%v: failed to create mod cache directory: %v\n", color.RedString("error"), err)
+		//log.Fatalf("%v: failed to create mod cache directory: %v\n", color.RedString("error"), err)
 	}
 
 	if p.ModFile != "" {

@@ -30,6 +30,7 @@ go 1.13
 
 type options struct {
 	GoBinPath string `long:"go-bin" env:"GOP_GO_BIN" description:"Set full path to go binary"`
+	CachePath string `long:"cache" env:"GOP_CACHE_PATH" description:"Set cache directory"`
 	Verbose   bool   `short:"v" long:"verbose" description:"Verbose output"`
 }
 
@@ -66,12 +67,15 @@ func main() {
 }
 
 func createTempWorkDir() (wd string, cleanFn func()) {
-	dir, err := os.MkdirTemp(os.TempDir(), "gop_")
-	if err != nil {
-		log.Fatalln("failed to create temporary working directory: ", color.RedString(err.Error()))
+	if len(commonOpts.CachePath) > 0 {
+		return commonOpts.CachePath, func() {}
+	} else {
+		dir, err := os.MkdirTemp(os.TempDir(), "gop_")
+		if err != nil {
+			log.Fatalln("failed to create temporary working directory: ", color.RedString(err.Error()))
+		}
+		return dir, func() { removeContent(dir) }
 	}
-
-	return dir, func() { removeContent(dir) }
 }
 
 func removeContent(dir string) {
